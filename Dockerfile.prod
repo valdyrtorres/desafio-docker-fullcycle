@@ -1,0 +1,19 @@
+FROM golang:alpine3.18 AS builder
+
+WORKDIR /usr/src/app
+
+COPY full-cycle-rocks.go .
+
+COPY go.mod .
+
+ARG CGO_ENABLED=0
+
+RUN go build -ldflags "-s -w" -o fullcycle .
+
+FROM scratch
+
+WORKDIR /usr/src/app
+
+COPY --from=builder /usr/src/app .
+
+ENTRYPOINT ["./fullcycle"]
